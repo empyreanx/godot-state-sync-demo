@@ -1,10 +1,12 @@
 extends Node
 
+const CONNECT_ATTEMPTS = 20
+
 var timer = 0
 var host = true
 var ready = false
-var start_btn = null
-var connect_btn = null
+var start = null
+var connect = null
 var network_fps = null
 var port = null
 var ip = null
@@ -19,8 +21,8 @@ var packet_peer = PacketPeerUDP.new()
 var boxes = null
 
 func _ready():
-	start_btn = get_node("controls/start")
-	connect_btn = get_node("controls/connect")
+	start = get_node("controls/start")
+	connect = get_node("controls/connect")
 	port = get_node("controls/port")
 	ip = get_node("controls/ip")
 	network_fps = get_node("controls/network_fps")
@@ -28,12 +30,13 @@ func _ready():
 	boxes = get_node("boxes").get_children()
 	
 	load_defaults()
-	set_process(true)
 	
 	for arg in OS.get_cmdline_args():
 		if (arg == "-server"):
 			start_server()
 			break
+			
+	set_process(true)
 
 # Load default values
 func load_defaults():
@@ -60,48 +63,111 @@ func _on_connect_pressed():
 func _process(delta):
 	#Server update
 	if (ready and host):
-		pass
+		# Handle incoming
+		while (packet_peer.get_available_packet_count() > 0):
+			var packet = packet_peer.get_var()
+			
+			if (packet[0] == "connect"):
+				var ip = packet_peer.get_packet_ip()
+				var port = packet_peer.get_packet_port()
+				
+				if (not has_client(ip, port)):
+					print("Client (", ip, ":", port, ") connected")
+					clients.append({ ip = ip, port = port })
+				
+				packet_peer.set_send_address(ip, port)
+				packet_peer.put_var(["accepted"])
+		
+		# Send outgoing
+		var duration = 1.0 / network_fps.get_value()
+		
+		if (timer < duration):
+			timer += delta
+		else:
+			timer = 0
+			for client in clients:
+				var packet = ["update"]
+				for box in boxes:
+					packet.append([box.get_name(), box.get_pos(), box.get_rot(), box.get_linear_velocity(), box.get_angular_velocity()])
+				packet_peer.set_send_address(client.ip, client.port)
+				packet_peer.put_var(packet)
+		
 	#Client update
 	if (ready and not host):
-		pass
+		while (packet_peer.get_available_packet_count() > 0):
+			var packet = packet_peer.get_var()
+			
+			if (packet[0] == "update"):
+				for i in range(1, packet.size()):
+					var box = get_node("boxes/" + packet[i][0])
+					box.set_pos(packet[i][1])
+					box.set_rot(packet[i][2])
+					box.set_linear_velocity(packet[i][3])
+					box.set_angular_velocity(packet[i][4])
 
 # Start/stop functions for client/server
 func start_client():
-	if (stream_peer.connect(ip.get_text(), port.get_val()) != OK):
+	# Select a port for the client
+	var client_port = port.get_val() + 1
+	
+	while (packet_peer.listen(client_port) != OK):
+		client_port += 1
+	
+	# Set server address
+	packet_peer.set_send_address(ip.get_text(), port.get_val())
+	
+	# Try to connect to server
+	var attempts = 0
+	var connected = false
+	while (not connected and attempts < CONNECT_ATTEMPTS):
+		packet_peer.put_var(["connect"])
+		OS.delay_msec(50)
+		
+		while (packet_peer.get_available_packet_count() > 0):
+			var packet = packet_peer.get_var()
+			if (packet[0] == "accepted"):
+				connected = true
+				break
+		
+		attempts += 1
+	
+	if (not connected):
 		print("Error connecting to ", ip.get_text(), ":", port.get_val())
 	else:
 		print("Connected to ", ip.get_text(), ":", port.get_val())
-		connect_btn.set_text("Disconnect")
-		start_btn.set_disabled(true)
+		connect.set_text("Disconnect")
+		start.set_disabled(true)
 		set_host_boxes(false)
-		set_stream_boxes(packet_peer)
+		set_packet_peer_boxes(packet_peer)
 		host = false
 		ready = true
 	
 func stop_client():
 	ready = false
 	host = true
+	packet_peer.close()
 	set_host_boxes(true)
 	print("Disconnected from ", ip.get_text(), ":", port.get_val())
-	connect_btn.set_text("Connect")
-	start_btn.set_disabled(false)
+	connect.set_text("Connect")
+	start.set_disabled(false)
 	
 func start_server():
-	if (server.listen(port.get_val()) != OK):
+	if (packet_peer.listen(port.get_val()) != OK):
 		print("Error listening on port ", port.get_value())
 	else:
 		print("Listening on port ", port.get_value())
-		start_btn.set_text("Stop Server")
-		connect_btn.set_disabled(true)
+		start.set_text("Stop Server")
+		connect.set_disabled(true)
 		set_host_boxes(true)
 		host = true
 		ready = true
 	
 func stop_server():
-	print("Stopped listening on ", port.get_value())
-	start_btn.set_text("Start Server")
-	connect_btn.set_disabled(false)
 	ready = false
+	packet_peer.close()
+	print("Stopped listening on ", port.get_value())
+	start.set_text("Start Server")
+	connect.set_disabled(false)
 
 # Sets all boxes to host mode
 func set_host_boxes(host):
@@ -109,6 +175,13 @@ func set_host_boxes(host):
 		box.host = host
 
 # Set stream for boxes
-func set_stream_boxes(stream):
+func set_packet_peer_boxes(packet_peer):
 	for box in boxes:
-		box.stream = stream
+		box.packet_peer = packet_peer
+
+# Check client is registered
+func has_client(ip, port):
+	for client in clients:
+		if (client.ip == ip and client.port == port):
+			return true
+	return false
