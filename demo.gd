@@ -75,7 +75,7 @@ func _process(delta):
 			
 			if (packet[0] == "connect"):
 				if (not has_client(ip, port)):
-					print("Client connected from: ", ip, ":", port)
+					print("Client connected from ", ip, ":", port)
 					clients.append({ ip = ip, port = port })
 				
 				packet_peer.set_send_address(ip, port)
