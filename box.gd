@@ -46,10 +46,10 @@ func stop_dragging():
 		set_gravity_scale(1)
 		set_applied_force(Vector2(0,0))
 	else:
-		packet_peer.put_var(["stop_drag", get_name()])
+		packet_peer.put_var(["event", "stop_drag", get_name()])
 
 func drag(pos):
 	if (host):
 		set_applied_force((pos - get_pos()) * SCALE_FACTOR)
 	else:
-		packet_peer.put_var(["drag", get_name(), pos])
+		packet_peer.put_var(["event", "drag", get_name(), pos])

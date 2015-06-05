@@ -67,16 +67,29 @@ func _process(delta):
 		while (packet_peer.get_available_packet_count() > 0):
 			var packet = packet_peer.get_var()
 			
+			if (packet == null):
+				continue
+			
+			var ip = packet_peer.get_packet_ip()
+			var port = packet_peer.get_packet_port()
+			
 			if (packet[0] == "connect"):
-				var ip = packet_peer.get_packet_ip()
-				var port = packet_peer.get_packet_port()
-				
 				if (not has_client(ip, port)):
-					print("Client (", ip, ":", port, ") connected")
+					print("Client connected from: ", ip, ":", port)
 					clients.append({ ip = ip, port = port })
 				
 				packet_peer.set_send_address(ip, port)
 				packet_peer.put_var(["accepted"])
+			elif (packet[0] == "event"):
+				# Handle event locally
+				handleEvent(packet)
+				
+				# Broadcast event to clients
+				for client in clients:
+					if (client.ip != ip and client.port != port):
+						packet_peer.set_send_address(ip, port)
+						packet_peer.put_var(packet)
+			
 		
 		# Send outgoing
 		var duration = 1.0 / network_fps.get_value()
@@ -97,6 +110,9 @@ func _process(delta):
 		while (packet_peer.get_available_packet_count() > 0):
 			var packet = packet_peer.get_var()
 			
+			if (packet == null):
+				return
+			
 			if (packet[0] == "update"):
 				for i in range(1, packet.size()):
 					var box = get_node("boxes/" + packet[i][0])
@@ -104,6 +120,8 @@ func _process(delta):
 					box.set_rot(packet[i][2])
 					box.set_linear_velocity(packet[i][3])
 					box.set_angular_velocity(packet[i][4])
+			elif (packet[0] == "event"):
+				handleEvent(packet)
 
 # Start/stop functions for client/server
 func start_client():
@@ -119,20 +137,22 @@ func start_client():
 	# Try to connect to server
 	var attempts = 0
 	var connected = false
+	
 	while (not connected and attempts < CONNECT_ATTEMPTS):
+		attempts += 1
+	
 		packet_peer.put_var(["connect"])
 		OS.delay_msec(50)
 		
 		while (packet_peer.get_available_packet_count() > 0):
 			var packet = packet_peer.get_var()
-			if (packet[0] == "accepted"):
+			if (packet != null and packet[0] == "accepted"):
 				connected = true
 				break
-		
-		attempts += 1
 	
 	if (not connected):
 		print("Error connecting to ", ip.get_text(), ":", port.get_val())
+		return;
 	else:
 		print("Connected to ", ip.get_text(), ":", port.get_val())
 		connect.set_text("Disconnect")
@@ -154,6 +174,7 @@ func stop_client():
 func start_server():
 	if (packet_peer.listen(port.get_val()) != OK):
 		print("Error listening on port ", port.get_value())
+		return
 	else:
 		print("Listening on port ", port.get_value())
 		start.set_text("Stop Server")
@@ -168,6 +189,16 @@ func stop_server():
 	print("Stopped listening on ", port.get_value())
 	start.set_text("Start Server")
 	connect.set_disabled(false)
+
+# Event handler
+func handleEvent(packet):
+	var type = packet[1]
+	var box = get_node("boxes/" + packet[2])
+				
+	if (type == "drag"):
+		box.drag(packet[3])
+	elif (type == "stop_drag"):
+		box.stop_dragging()
 
 # Sets all boxes to host mode
 func set_host_boxes(host):
