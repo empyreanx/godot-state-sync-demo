@@ -35,7 +35,7 @@ func _ready():
 		if (arg == "-server"):
 			start_server()
 			break
-			
+	
 	set_process(true)
 
 # Load default values
