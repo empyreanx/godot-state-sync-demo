@@ -1,7 +1,5 @@
 extends RigidBody2D
 
-const LERP_WEIGHT = 0.1
-
 const EVENT_START_DRAG = 0
 const EVENT_END_DRAG = 1
 const EVENT_DRAGGING = 2
@@ -12,6 +10,7 @@ var dragging = false
 var host = true;
 var packet_peer = null
 var sprite = null
+var weight = 0.0
 
 func _ready():
 	sprite = load("sprite.xml").instance()
@@ -39,8 +38,8 @@ func _input(event):
 		stop_dragging()
 
 func _fixed_process(delta):
-	sprite.set_pos(lerp_pos(sprite.get_pos(), get_pos(), LERP_WEIGHT))
-	sprite.set_rot(slerp_rot(sprite.get_rot(), get_rot(), LERP_WEIGHT))
+	sprite.set_pos(lerp_pos(sprite.get_pos(), get_pos(), weight))
+	sprite.set_rot(slerp_rot(sprite.get_rot(), get_rot(), weight))
 
 func start_dragging():
 	dragging = true

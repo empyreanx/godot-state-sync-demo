@@ -8,6 +8,7 @@ var ready = false
 var start = null
 var connect = null
 var network_fps = null
+var weight = null
 var port = null
 var ip = null
 
@@ -27,10 +28,14 @@ func _ready():
 	port = get_node("controls/port")
 	ip = get_node("controls/ip")
 	network_fps = get_node("controls/network_fps")
+	weight = get_node("controls/weight")
 	
 	boxes = get_node("boxes").get_children()
 	
 	load_defaults()
+	
+	for box in boxes:
+		box.weight = weight.get_val()
 	
 	for arg in OS.get_cmdline_args():
 		if (arg == "-server"):
@@ -46,6 +51,7 @@ func load_defaults():
 	ip.set_text(config_file.get_value("defaults", "ip"))
 	port.set_value(config_file.get_value("defaults", "port"))
 	network_fps.set_value(config_file.get_value("defaults", "network_fps"))
+	weight.set_value(config_file.get_value("defaults", "weight"))
 
 # Toggle starting/stoping a server
 func _on_start_pressed():
@@ -126,6 +132,11 @@ func _process(delta):
 						box.set_angular_velocity(packet[i][4])
 			elif (packet[0] == "event"):
 				handle_event(packet)
+
+func _on_weight_value_changed(value):
+	if (boxes != null):
+		for box in boxes:
+			box.weight = value
 
 # Start/stop functions for client/server
 func start_client():
