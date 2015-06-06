@@ -7,7 +7,7 @@ Both the client and the server run the physical simulation. State snapshots are 
 To start a dedicated server with the headless version of Godot type, "godotserver -server" in the project directory.
 
 ## Todo:
-* Separate sprite state from physics state and use gradual error correction
+* Add sequence checking
 
 ## License
 Copyright (c) 2015 James McLean  
