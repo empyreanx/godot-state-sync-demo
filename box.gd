@@ -39,7 +39,7 @@ func _input(event):
 
 func _fixed_process(delta):
 	sprite.set_pos(lerp_pos(sprite.get_pos(), get_pos(), weight))
-	sprite.set_rot(slerp_rot(sprite.get_rot(), get_rot(), weight))
+	sprite.set_rot(slerp_rot(sprite.get_rot(), get_rot(), 1.0 - weight))
 
 func start_dragging():
 	dragging = true
