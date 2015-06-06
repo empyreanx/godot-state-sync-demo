@@ -6,8 +6,9 @@ Both the client and the server run the physical simulation. State snapshots are 
 
 To start a dedicated server with the headless version of Godot type, "godotserver -server" in the project directory.
 
-## Todo:
-* Add sequence checking
+## Features
+* Sequence checking for state updates
+* Linear error correction for position and rotation
 
 ## License
 Copyright (c) 2015 James McLean  

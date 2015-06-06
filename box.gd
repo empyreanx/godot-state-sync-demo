@@ -39,8 +39,8 @@ func _input(event):
 		stop_dragging()
 
 func _fixed_process(delta):
-	sprite.set_pos(lerp_vector(sprite.get_pos(), get_pos(), LERP_WEIGHT))
-	sprite.set_rot(get_rot())
+	sprite.set_pos(lerp_pos(sprite.get_pos(), get_pos(), LERP_WEIGHT))
+	sprite.set_rot(slerp_rot(sprite.get_rot(), get_rot(), LERP_WEIGHT))
 
 func start_dragging():
 	dragging = true
@@ -64,5 +64,21 @@ func drag(pos):
 	else:
 		packet_peer.put_var(["event", "drag", get_name(), pos])
 
-func lerp_vector(p1, p2, weight):
+# Linearly interpolate vector
+func lerp_pos(p1, p2, weight):
 	return p1 * weight + p2 * (1 - weight)
+
+# Spherically linear interpolation of rotation
+func slerp_rot(r1, r2, weight):
+	var v1 = Vector2(cos(r1), sin(r1))
+	var v2 = Vector2(cos(r2), sin(r2))
+	var v = slerp(v1, v2, weight)
+	return atan2(v.y, v.x)
+
+# Spherical linear interpolation of two 2D vectors
+func slerp(v1, v2, weight):
+	var cos_angle = v1.dot(v2)
+	var angle = acos(cos_angle)
+	var angle_weight = angle * weight
+	var v3 = (v2 - (v1.dot(v2) * v1)).normalized()
+	return v1 * cos(angle_weight) + v3 * sin(angle_weight)

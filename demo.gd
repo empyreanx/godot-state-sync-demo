@@ -16,6 +16,7 @@ var clients = []
 
 # For client
 var packet_peer = PacketPeerUDP.new()
+var seq = -1
 
 # Boxes in the scene
 var boxes = null
@@ -76,7 +77,7 @@ func _process(delta):
 			if (packet[0] == "connect"):
 				if (not has_client(ip, port)):
 					print("Client connected from ", ip, ":", port)
-					clients.append({ ip = ip, port = port })
+					clients.append({ ip = ip, port = port, seq = 0 })
 				
 				packet_peer.set_send_address(ip, port)
 				packet_peer.put_var(["accepted"])
@@ -99,7 +100,8 @@ func _process(delta):
 		else:
 			timer = 0
 			for client in clients:
-				var packet = ["update"]
+				var packet = ["update", client.seq]
+				client.seq += 1
 				for box in boxes:
 					packet.append([box.get_name(), box.get_pos(), box.get_rot(), box.get_linear_velocity(), box.get_angular_velocity()])
 				packet_peer.set_send_address(client.ip, client.port)
@@ -114,12 +116,14 @@ func _process(delta):
 				return
 			
 			if (packet[0] == "update"):
-				for i in range(1, packet.size()):
-					var box = get_node("boxes/" + packet[i][0])
-					box.set_pos(packet[i][1])
-					box.set_rot(packet[i][2])
-					box.set_linear_velocity(packet[i][3])
-					box.set_angular_velocity(packet[i][4])
+				if (packet[1] > seq):
+					seq = packet[1]
+					for i in range(2, packet.size()):
+						var box = get_node("boxes/" + packet[i][0])
+						box.set_pos(packet[i][1])
+						box.set_rot(packet[i][2])
+						box.set_linear_velocity(packet[i][3])
+						box.set_angular_velocity(packet[i][4])
 			elif (packet[0] == "event"):
 				handle_event(packet)
 
