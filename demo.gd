@@ -12,11 +12,12 @@ var weight = null
 var port = null
 var ip = null
 
+var packet_peer = PacketPeerUDP.new()
+
 # For server
 var clients = []
 
 # For client
-var packet_peer = PacketPeerUDP.new()
 var seq = -1
 
 # Boxes in the scene
@@ -31,6 +32,8 @@ func _ready():
 	weight = get_node("controls/weight")
 	
 	boxes = get_node("boxes").get_children()
+	
+	set_packet_peer_boxes(packet_peer)
 	
 	load_defaults()
 	
@@ -173,7 +176,6 @@ func start_client():
 		connect.set_text("Disconnect")
 		start.set_disabled(true)
 		set_host_boxes(false)
-		set_packet_peer_boxes(packet_peer)
 		host = false
 		ready = true
 	
@@ -205,15 +207,23 @@ func stop_server():
 	start.set_text("Start Server")
 	connect.set_disabled(false)
 
+# Broadcast packet to all clients
+func broadcast(packet):
+	for client in clients:
+		packet_peer.set_send_address(client.ip, client.port)
+		packet_peer.put_var(packet)
+
 # Event handler
 func handle_event(packet):
 	var type = packet[1]
 	var box = get_node("boxes/" + packet[2])
-				
-	if (type == "drag"):
+	
+	if (type == "start_drag"):
+		box.start_drag()
+	elif (type == "drag"):
 		box.drag(packet[3])
 	elif (type == "stop_drag"):
-		box.stop_dragging()
+		box.stop_drag()
 
 # Sets all boxes to host mode
 func set_host_boxes(host):

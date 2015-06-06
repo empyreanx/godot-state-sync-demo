@@ -22,7 +22,9 @@ func _ready():
 
 func _input_event(viewport, event, shape_idx):
 	if (event.type == InputEvent.MOUSE_BUTTON and event.pressed):
-		start_dragging()
+		dragging = true
+		start_drag()
+		broadcast(["event", "start_drag", get_name()])
 
 func _input(event):
 	if (event.type == InputEvent.MOUSE_MOTION and dragging):
@@ -30,38 +32,38 @@ func _input(event):
 		var pos = event.pos
 		
 		if (pos.x <= 0 or pos.y <= 0 or pos.x >= (rect.size.x - 1) or pos.y >= (rect.size.y - 1)):
-			stop_dragging()
+			dragging = false
+			stop_drag()
+			broadcast(["event", "stop_drag", get_name()])
 		else:
 			drag(pos)
+			broadcast(["event", "drag", get_name(), pos])
 			
 	elif (event.type == InputEvent.MOUSE_BUTTON and not event.pressed and dragging):
-		stop_dragging()
+		dragging = false
+		stop_drag()
+		broadcast(["event", "stop_drag", get_name()])
 
 func _fixed_process(delta):
 	sprite.set_pos(lerp_pos(sprite.get_pos(), get_pos(), weight))
 	sprite.set_rot(slerp_rot(sprite.get_rot(), get_rot(), 1.0 - weight))
 
-func start_dragging():
-	dragging = true
+func start_drag():
+	set_gravity_scale(0)
+	set_linear_velocity(Vector2(0,0))
 
-	if (host):
-		set_gravity_scale(0)
-		set_linear_velocity(Vector2(0,0))
-
-func stop_dragging():
-	dragging = false
-	
-	if (host):
-		set_gravity_scale(1)
-		set_applied_force(Vector2(0,0))
-	else:
-		packet_peer.put_var(["event", "stop_drag", get_name()])
+func stop_drag():
+	set_gravity_scale(1)
+	set_applied_force(Vector2(0,0))
 
 func drag(pos):
+	set_applied_force((pos - get_pos()) * SCALE_FACTOR)
+
+func broadcast(packet):
 	if (host):
-		set_applied_force((pos - get_pos()) * SCALE_FACTOR)
+		get_node("/root/demo").broadcast(packet)
 	else:
-		packet_peer.put_var(["event", "drag", get_name(), pos])
+		packet_peer.put_var(packet)
 
 # Linearly interpolate vector
 func lerp_pos(p1, p2, weight):
@@ -81,3 +83,4 @@ func slerp(v1, v2, weight):
 	var angle_weight = angle * weight
 	var v3 = (v2 - (v1.dot(v2) * v1)).normalized()
 	return v1 * cos(angle_weight) + v3 * sin(angle_weight)
+	
