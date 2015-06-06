@@ -82,7 +82,7 @@ func _process(delta):
 				packet_peer.put_var(["accepted"])
 			elif (packet[0] == "event"):
 				# Handle event locally
-				handleEvent(packet)
+				handle_event(packet)
 				
 				# Broadcast event to clients
 				for client in clients:
@@ -121,7 +121,7 @@ func _process(delta):
 					box.set_linear_velocity(packet[i][3])
 					box.set_angular_velocity(packet[i][4])
 			elif (packet[0] == "event"):
-				handleEvent(packet)
+				handle_event(packet)
 
 # Start/stop functions for client/server
 func start_client():
@@ -191,7 +191,7 @@ func stop_server():
 	connect.set_disabled(false)
 
 # Event handler
-func handleEvent(packet):
+func handle_event(packet):
 	var type = packet[1]
 	var box = get_node("boxes/" + packet[2])
 				

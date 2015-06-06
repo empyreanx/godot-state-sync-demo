@@ -142,7 +142,7 @@
 				<resource  resource_type="Script" path="res://demo.gd">  </resource>
 				<dictionary  shared="false">
 					<string> "__editor_plugin_screen__" </string>
-					<string> "Script" </string>
+					<string> "2D" </string>
 					<string> "__editor_plugin_states__" </string>
 					<dictionary  shared="false">
 						<string> "2D" </string>
@@ -313,7 +313,7 @@
 				<real> 54 </real>
 				<real> 77 </real>
 				<real> 100 </real>
-				<real> 40 </real>
+				<real> 60 </real>
 				<real> 85 </real>
 				<real> 98 </real>
 				<real> 81 </real>
