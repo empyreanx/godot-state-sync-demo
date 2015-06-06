@@ -10,6 +10,9 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 * Sequence checking for state updates
 * Linear error correction for position and rotation
 
+## Todo
+* Fix disappearing sprites
+
 ## License
 Copyright (c) 2015 James McLean  
 Licensed under the MIT license.
