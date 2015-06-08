@@ -18,6 +18,7 @@ var clients = []
 
 # For client
 var seq = -1
+var state = null
 
 # Boxes in the scene
 var boxes = null
@@ -55,12 +56,12 @@ func _on_start_pressed():
 	if (not ready):
 		start_server()
 	else:
-		stop_server()	
+		stop_server()
 	
 # Toggle connecting/disconnecting a client
 func _on_connect_pressed():
-	if (not ready):	
-		start_client()	
+	if (not ready):
+		start_client()
 	else:
 		stop_client();
 		
@@ -116,17 +117,10 @@ func _process(delta):
 			var packet = packet_peer.get_var()
 			
 			if (packet == null):
-				return
+				continue
 			
 			if (packet[0] == "update"):
-				if (packet[1] > seq):
-					seq = packet[1]
-					for i in range(2, packet.size()):
-						var box = get_node("boxes/" + packet[i][0])
-						box.set_pos(packet[i][1])
-						box.set_rot(packet[i][2])
-						box.set_linear_velocity(packet[i][3])
-						box.set_angular_velocity(packet[i][4])
+				handle_update(packet)
 			elif (packet[0] == "event"):
 				handle_event(packet)
 
@@ -159,7 +153,7 @@ func start_client():
 	
 	if (not connected):
 		print("Error connecting to ", ip.get_text(), ":", port.get_val())
-		return;
+		return
 	else:
 		print("Connected to ", ip.get_text(), ":", port.get_val())
 		connect.set_text("Disconnect")
@@ -201,6 +195,17 @@ func broadcast(packet):
 	for client in clients:
 		packet_peer.set_send_address(client.ip, client.port)
 		packet_peer.put_var(packet)
+
+# Update handler
+func handle_update(packet):
+	if (packet[1] > seq):
+		seq = packet[1]
+		for i in range(2, packet.size()):
+			var box = get_node("boxes/" + packet[i][0])
+			box.set_pos(packet[i][1])
+			box.set_rot(packet[i][2])
+			box.set_linear_velocity(packet[i][3])
+			box.set_angular_velocity(packet[i][4])
 
 # Event handler
 func handle_event(packet):
