@@ -1,7 +1,6 @@
 extends Node
 
 const CONNECT_ATTEMPTS = 20
-const ALPHA = 0.1
 
 var timer = 0
 var host = true
@@ -43,7 +42,6 @@ func _ready():
 			break
 	
 	set_process(true)
-	set_fixed_process(true)
 	
 # Load default values
 func load_defaults():
@@ -96,8 +94,7 @@ func _process(delta):
 					if (client.ip != ip and client.port != port):
 						packet_peer.set_send_address(ip, port)
 						packet_peer.put_var(packet)
-			
-		
+						
 		# Send outgoing
 		var duration = 1.0 / network_fps.get_value()
 		
@@ -125,16 +122,6 @@ func _process(delta):
 				handle_update(packet)
 			elif (packet[0] == "event"):
 				handle_event(packet)
-
-func _fixed_process(delta):
-	if (ready and not host):
-		for box in boxes:
-			if (state.has(box.get_name())):
-				var box_state = state[box.get_name()]
-				if (box.get_pos().distance_to(box_state[0]) > 1.0):
-					box.set_pos(lerp_pos(box.get_pos(), box_state[0], 1.0 - ALPHA))
-				
-				#box.set_rot(slerp_rot(box.get_rot(), box_state[1], ALPHA))
 				
 # Start/stop functions for client/server
 func start_client():
@@ -218,12 +205,8 @@ func handle_update(packet):
 			var rot = packet[i][2]
 			var lv = packet[i][3]
 			var av = packet[i][4]
-			state[name] = [pos, rot, lv, av]
-			var box = get_node("boxes/" + packet[i][0])
-			#box.set_pos(pos)
-			#box.set_rot(rot)
-			box.set_linear_velocity(lv)
-			box.set_angular_velocity(av)
+			var box = get_node("boxes/" + name)
+			box.set_state([pos, rot, lv, av])
 
 # Event handler
 func handle_event(packet):
@@ -253,22 +236,3 @@ func has_client(ip, port):
 		if (client.ip == ip and client.port == port):
 			return true
 	return false
-
-# Lerp vector
-func lerp_pos(v1, v2, alpha):
-	return v1 * alpha + v2 * (1.0 - alpha)
-
-# Spherically linear interpolation of rotation
-func slerp_rot(r1, r2, alpha):
-	var v1 = Vector2(cos(r1), sin(r1))
-	var v2 = Vector2(cos(r2), sin(r2))
-	var v = slerp(v1, v2, alpha)
-	return atan2(v.y, v.x)
-
-# Spherical linear interpolation of two 2D vectors
-func slerp(v1, v2, alpha):
-	var cos_angle = v1.dot(v2)
-	var angle = acos(cos_angle)
-	var angle_alpha = angle * alpha
-	var v3 = (v2 - (v1.dot(v2) * v1)).normalized()
-	return v1 * cos(angle_alpha) + v3 * sin(angle_alpha)

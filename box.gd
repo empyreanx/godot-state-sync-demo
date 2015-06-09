@@ -4,14 +4,26 @@ const EVENT_START_DRAG = 0
 const EVENT_END_DRAG = 1
 const EVENT_DRAGGING = 2
 
+const ALPHA = 0.1
 const SCALE_FACTOR = 25
 
 var dragging = false
 var host = true;
 var packet_peer = null
 
+var state = null
+
 func _ready():
 	set_process_input(true)
+
+func _integrate_forces(s):
+	if (not host and state != null):
+		var transform = s.get_transform()
+		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
+		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
+		s.set_transform(Matrix32(rot, pos))
+		s.set_linear_velocity(state[2])
+		s.set_angular_velocity(state[3])
 
 func _input_event(viewport, event, shape_idx):
 	if (event.type == InputEvent.MOUSE_BUTTON and event.pressed):
@@ -53,3 +65,25 @@ func broadcast(packet):
 		get_node("/root/demo").broadcast(packet)
 	else:
 		packet_peer.put_var(packet)
+
+func set_state(state):
+	self.state = state
+	
+# Lerp vector
+func lerp_pos(v1, v2, alpha):
+	return v1 * alpha + v2 * (1.0 - alpha)
+
+# Spherically linear interpolation of rotation
+func slerp_rot(r1, r2, alpha):
+	var v1 = Vector2(cos(r1), sin(r1))
+	var v2 = Vector2(cos(r2), sin(r2))
+	var v = slerp(v1, v2, alpha)
+	return atan2(v.y, v.x)
+
+# Spherical linear interpolation of two 2D vectors
+func slerp(v1, v2, alpha):
+	var cos_angle = v1.dot(v2)
+	var angle = acos(cos_angle)
+	var angle_alpha = angle * alpha
+	var v3 = (v2 - (v1.dot(v2) * v1)).normalized()
+	return v1 * cos(angle_alpha) + v3 * sin(angle_alpha)
