@@ -140,7 +140,6 @@ func start_client():
 	
 	while (not connected and attempts < CONNECT_ATTEMPTS):
 		attempts += 1
-	
 		packet_peer.put_var(["connect"])
 		OS.delay_msec(50)
 		

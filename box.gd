@@ -16,15 +16,25 @@ var state = null
 
 func _ready():
 	set_process_input(true)
+	set_fixed_process(true)
 
-func _integrate_forces(s):
+#func _integrate_forces(s):
+#	if (not host and state != null):
+#		var transform = s.get_transform()
+#		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
+#		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
+#		s.set_transform(Matrix32(rot, pos))
+#		s.set_linear_velocity(state[2])
+#		s.set_angular_velocity(state[3])
+
+func _fixed_process(delta):
 	if (not host and state != null):
-		var transform = s.get_transform()
-		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
-		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
-		s.set_transform(Matrix32(rot, pos))
-		s.set_linear_velocity(state[2])
-		s.set_angular_velocity(state[3])
+		var pos = lerp_pos(get_pos(), state[0], 1.0 - ALPHA)
+		var rot = slerp_rot(get_rot(), state[1], ALPHA)
+		set_pos(pos)
+		set_rot(rot)
+		set_linear_velocity(state[2])
+		set_angular_velocity(state[3])
 
 func _input_event(viewport, event, shape_idx):
 	if (event.type == InputEvent.MOUSE_BUTTON and event.pressed):
