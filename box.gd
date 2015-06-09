@@ -5,6 +5,7 @@ const EVENT_END_DRAG = 1
 const EVENT_DRAGGING = 2
 
 const ALPHA = 0.1
+const EPSILON = 0.0005
 const SCALE_FACTOR = 25
 
 var dragging = false
@@ -82,8 +83,12 @@ func slerp_rot(r1, r2, alpha):
 
 # Spherical linear interpolation of two 2D vectors
 func slerp(v1, v2, alpha):
-	var cos_angle = v1.dot(v2)
+	var cos_angle = clamp(v1.dot(v2), -1.0, 1.0)
+	
+	if (cos_angle > 1.0 - EPSILON):
+		return lerp_pos(v1, v2, alpha).normalized()
+	
 	var angle = acos(cos_angle)
 	var angle_alpha = angle * alpha
-	var v3 = (v2 - (v1.dot(v2) * v1)).normalized()
+	var v3 = (v2 - (cos_angle * v1)).normalized()
 	return v1 * cos(angle_alpha) + v3 * sin(angle_alpha)
