@@ -12,29 +12,29 @@ var dragging = false
 var host = true;
 var packet_peer = null
 
-var state = null
+var box_state = null
 
 func _ready():
 	set_process_input(true)
 	set_fixed_process(true)
-
+	
 #func _integrate_forces(s):
-#	if (not host and state != null):
+#	if (not host and box_state != null):
 #		var transform = s.get_transform()
-#		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
-#		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
+#		var pos = lerp_pos(transform.get_origin(), box_state[0], 1.0 - ALPHA)
+#		var rot = slerp_rot(transform.get_rotation(), box_state[1], ALPHA)
 #		s.set_transform(Matrix32(rot, pos))
-#		s.set_linear_velocity(state[2])
-#		s.set_angular_velocity(state[3])
+#		s.set_linear_velocity(box_state[2])
+#		s.set_angular_velocity(box_state[3])
 
 func _fixed_process(delta):
-	if (not host and state != null):
-		var pos = lerp_pos(get_pos(), state[0], 1.0 - ALPHA)
-		var rot = slerp_rot(get_rot(), state[1], ALPHA)
+	if (not host and box_state != null):
+		var pos = lerp_pos(get_pos(), box_state[0], 1.0 - ALPHA)
+		var rot = slerp_rot(get_rot(), box_state[1], ALPHA)
 		set_pos(pos)
 		set_rot(rot)
-		set_linear_velocity(state[2])
-		set_angular_velocity(state[3])
+		set_linear_velocity(box_state[2])
+		set_angular_velocity(box_state[3])
 
 func _input_event(viewport, event, shape_idx):
 	if (event.type == InputEvent.MOUSE_BUTTON and event.pressed):
@@ -77,8 +77,8 @@ func broadcast(packet):
 	else:
 		packet_peer.put_var(packet)
 
-func set_state(state):
-	self.state = state
+func set_box_state(box_state):
+	self.box_state = box_state
 	
 # Lerp vector
 func lerp_pos(v1, v2, alpha):
