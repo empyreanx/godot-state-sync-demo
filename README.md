@@ -17,5 +17,5 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 * Compression
 
 ## License
-Copyright (c) 2015 James McLean
+Copyright (c) 2015 James McLean  
 Licensed under the MIT license.
