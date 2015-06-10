@@ -205,7 +205,7 @@ func handle_update(packet):
 			var lv = packet[i][3]
 			var av = packet[i][4]
 			var box = get_node("boxes/" + name)
-			box.set_box_state([pos, rot, lv, av])
+			box.set_state([pos, rot, lv, av])
 
 # Event handler
 func handle_event(packet):
