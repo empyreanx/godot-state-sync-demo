@@ -7,19 +7,22 @@ const EVENT_DRAGGING = 2
 const ALPHA = 0.1
 const EPSILON = 0.0005
 const SCALE_FACTOR = 25
+const STATE_EXPIRATION_TIME = 1.0 / 20.0
 
 var dragging = false
 var host = true;
 var packet_peer = null
 
 var state = null
+var state_timer = 0
 
 func _ready():
 	set_process_input(true)
 	set_can_sleep(false)
 	
 func _integrate_forces(s):
-	if (not host and state != null):
+	if (not host and state != null and state_timer < STATE_EXPIRATION_TIME):
+		state_timer += s.get_step()
 		var transform = s.get_transform()
 		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
 		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
@@ -70,6 +73,7 @@ func broadcast(packet):
 
 func set_state(state):
 	self.state = state
+	self.state_timer = 0
 	
 # Lerp vector
 func lerp_pos(v1, v2, alpha):
