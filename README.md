@@ -18,4 +18,4 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 
 ## License
 Copyright (c) 2015 James McLean
-Licensed under the MIT license.
+Licensed under the MIT license
