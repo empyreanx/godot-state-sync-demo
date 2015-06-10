@@ -9,10 +9,10 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 ## Features
 * Sequence checking for state updates
 * Linearly interpolated error correction for position and rotation
+* Experimental state expiration
 
 ## Todo
 * Jitter buffer
-* State expiration
 * Snap state when distance is greater than some threshold
 
 ## License
