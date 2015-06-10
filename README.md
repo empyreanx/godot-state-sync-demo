@@ -13,6 +13,7 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 ## Todo
 * Jitter buffer
 * State expiration
+* Snap state when distance is greater than some threshold
 
 ## License
 Copyright (c) 2015 James McLean
