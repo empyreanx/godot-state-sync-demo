@@ -26,7 +26,10 @@ func _integrate_forces(s):
 		var transform = s.get_transform()
 		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
 		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
-		s.set_transform(Matrix32(rot, pos))
+		#s.set_transform(Matrix32(rot, pos))
+		var x_axis = Vector2(cos(rot), -sin(rot))
+		var y_axis = Vector2(sin(rot), cos(rot))
+		s.set_transform(Matrix32(x_axis, y_axis, pos))
 		s.set_linear_velocity(state[2])
 		s.set_angular_velocity(state[3])
 
