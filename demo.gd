@@ -1,5 +1,7 @@
 extends Node
 
+var PlayoutBuffer = load("playoutbuffer.gd")
+
 const CONNECT_ATTEMPTS = 20
 
 var timer = 0
@@ -11,6 +13,7 @@ var network_fps = null
 var port = null
 var ip = null
 
+var playout_buffer = PlayoutBuffer.new(0.1, 40)
 var packet_peer = PacketPeerUDP.new()
 
 # For server
@@ -18,7 +21,6 @@ var clients = []
 
 # For client
 var seq = -1
-var state = {}
 
 # Boxes in the scene
 var boxes = null
@@ -112,6 +114,11 @@ func _process(delta):
 		
 	#Client update
 	if (ready and not host):
+		playout_buffer.update(delta)
+		
+		#if (playout_buffer.ready()):
+		#	handle_update(playout_buffer.pull())
+		
 		while (packet_peer.get_available_packet_count() > 0):
 			var packet = packet_peer.get_var()
 			
@@ -120,9 +127,10 @@ func _process(delta):
 			
 			if (packet[0] == "update"):
 				handle_update(packet)
+				#playout_buffer.push(packet)
 			elif (packet[0] == "event"):
 				handle_event(packet)
-				
+			
 # Start/stop functions for client/server
 func start_client():
 	# Select a port for the client
@@ -198,6 +206,7 @@ func broadcast(packet):
 func handle_update(packet):
 	if (packet[1] > seq):
 		seq = packet[1]
+		var state = {}
 		for i in range(2, packet.size()):
 			var name = packet[i][0]
 			var pos = packet[i][1]

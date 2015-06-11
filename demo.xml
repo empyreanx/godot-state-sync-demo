@@ -265,11 +265,12 @@
 						<string> "Script" </string>
 						<dictionary  shared="false">
 							<string> "current" </string>
-							<int> 0 </int>
+							<int> 1 </int>
 							<string> "sources" </string>
-							<array  len="2" shared="false">
+							<array  len="3" shared="false">
 								<string> "res://box.gd" </string>
 								<string> "res://demo.gd" </string>
+								<string> "res://playoutbuffer.gd" </string>
 							</array>
 						</dictionary>
 					</dictionary>
