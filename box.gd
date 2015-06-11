@@ -23,12 +23,14 @@ func _ready():
 func _integrate_forces(s):
 	if (not host and state != null and state_timer < STATE_EXPIRATION_TIME):
 		state_timer += s.get_step()
-		var transform = s.get_transform()
-		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
-		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
-		s.set_transform(Matrix32(rot, pos))
-		s.set_linear_velocity(state[2])
-		s.set_angular_velocity(state[3])
+		var transform = Matrix32(state[1], state[0])
+		s.set_transform(s.get_transform().interpolate_with(transform, ALPHA))
+		#var transform = s.get_transform()
+		#var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
+		#var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
+		#s.set_transform(Matrix32(rot, pos))
+		#s.set_linear_velocity(state[2])
+		#s.set_angular_velocity(state[3])
 
 func _input_event(viewport, event, shape_idx):
 	if (event.type == InputEvent.MOUSE_BUTTON and event.pressed):
