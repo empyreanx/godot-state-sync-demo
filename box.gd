@@ -8,6 +8,7 @@ const ALPHA = 0.1
 const EPSILON = 0.0005
 const SCALE_FACTOR = 25
 const STATE_EXPIRATION_TIME = 1.0 / 20.0
+const SNAP_DISTANCE = 50
 
 var dragging = false
 var host = true;
@@ -22,10 +23,18 @@ func _ready():
 	
 func _integrate_forces(s):
 	if (not host and state != null and state_timer < STATE_EXPIRATION_TIME):
+		var current_transform = s.get_transform()
+		var current_pos = current_transform.get_origin()
 		var transform = Matrix32(state[1], state[0])
-		s.set_transform(s.get_transform().interpolate_with(transform, ALPHA))
+		
+		if (current_pos.distance_to(state[0]) > SNAP_DISTANCE):	
+			s.set_transform(transform)
+		else:
+			s.set_transform(current_transform.interpolate_with(transform, ALPHA))
+		
 		s.set_linear_velocity(state[2])
 		s.set_angular_velocity(state[3])
+		
 		state_timer += s.get_step()
 
 func _input_event(viewport, event, shape_idx):

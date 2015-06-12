@@ -14,6 +14,7 @@ func _init(delay, rate):
 	
 func reset():
 	time = 0.0
+	last_pull_time = 0.0
 	buffer = []
 	state = BUFFERING
 
@@ -32,6 +33,8 @@ func ready():
 func update(delta):
 	if (state == BUFFERING and buffer.size() > 0 and time > delay):
 		state = PLAYING
+	elif (state == PLAYING and buffer.size() == 0):
+		state = BUFFERING
 	
 	while (buffer.size() > 0 and (time - buffer[0].time) > delay):
 		buffer.remove(0)
