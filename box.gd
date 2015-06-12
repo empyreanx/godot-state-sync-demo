@@ -12,7 +12,6 @@ const SNAP_DISTANCE = 50
 
 var dragging = false
 var host = true;
-var packet_peer = null
 
 var state = null
 var state_timer = 0
@@ -73,10 +72,12 @@ func drag(pos):
 	set_applied_force((pos - get_pos()) * SCALE_FACTOR)
 
 func broadcast(packet):
+	var demo = get_node("/root/demo")
+	
 	if (host):
-		get_node("/root/demo").broadcast(packet)
+		demo.server.broadcast(packet)
 	else:
-		packet_peer.put_var(packet)
+		demo.client.send(packet)
 
 func set_state(state):
 	self.state = state
