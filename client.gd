@@ -83,7 +83,6 @@ func get_box(name):
 func handle_update(packet):
 	if (packet[1] > seq):
 		seq = packet[1]
-		var state = {}
 		for i in range(2, packet.size()):
 			var name = packet[i][0]
 			var pos = packet[i][1]
