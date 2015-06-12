@@ -1,6 +1,6 @@
 extends Node
 
-var PlayoutBuffer = load("playoutbuffer.gd")
+#var PlayoutBuffer = load("playoutbuffer.gd")
 
 const CONNECT_ATTEMPTS = 20
 
@@ -13,7 +13,7 @@ var network_fps = null
 var port = null
 var ip = null
 
-var playout_buffer = PlayoutBuffer.new(0.1, 40)
+#var playout_buffer = PlayoutBuffer.new(0.1, 40)
 var packet_peer = PacketPeerUDP.new()
 
 # For server
@@ -114,7 +114,7 @@ func _process(delta):
 		
 	#Client update
 	if (ready and not host):
-		playout_buffer.update(delta)
+		#playout_buffer.update(delta)
 		
 		#if (playout_buffer.ready()):
 		#	handle_update(playout_buffer.pull())
