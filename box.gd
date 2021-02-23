@@ -19,7 +19,7 @@ var state_timer = 0
 func _ready():
 	set_process_input(true)
 	set_can_sleep(false)
-	
+
 func _integrate_forces(s):
 	if (not host and state != null and state_timer < STATE_EXPIRATION_TIME):
 		state_timer += s.get_step()
@@ -28,21 +28,21 @@ func _integrate_forces(s):
 		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
 		var x_axis = Vector2(cos(rot), -sin(rot))
 		var y_axis = Vector2(sin(rot), cos(rot))
-		s.set_transform(Matrix32(x_axis, y_axis, pos))
+		s.set_transform(Transform2D(x_axis, y_axis, pos))
 		s.set_linear_velocity(state[2])
 		s.set_angular_velocity(state[3])
 
-func _input_event(viewport, event, shape_idx):
-	if (event.type == InputEvent.MOUSE_BUTTON and event.pressed):
+func _input_event(_viewport, event, _shape_idx):
+	if (event is InputEventMouseButton and event.pressed):
 		dragging = true
 		start_drag()
 		broadcast(["event", "start_drag", get_name()])
 
 func _input(event):
-	if (event.type == InputEvent.MOUSE_MOTION and dragging):
-		var rect = get_tree().get_root().get_rect()
-		var pos = event.pos
-		
+	if (event is InputEventMouseMotion and dragging):
+		var rect = get_tree().get_root().get_visible_rect()
+		var pos = event.position
+
 		if (pos.x <= 0 or pos.y <= 0 or pos.x >= (rect.size.x - 1) or pos.y >= (rect.size.y - 1)):
 			dragging = false
 			stop_drag()
@@ -50,8 +50,8 @@ func _input(event):
 		else:
 			drag(pos)
 			broadcast(["event", "drag", get_name(), pos])
-			
-	elif (event.type == InputEvent.MOUSE_BUTTON and not event.pressed and dragging):
+
+	elif (event is InputEventMouseButton and not event.pressed and dragging):
 		dragging = false
 		stop_drag()
 		broadcast(["event", "stop_drag", get_name()])
@@ -65,7 +65,7 @@ func stop_drag():
 	set_applied_force(Vector2(0,0))
 
 func drag(pos):
-	set_applied_force((pos - get_pos()) * SCALE_FACTOR)
+	set_applied_force((pos - get_position()) * SCALE_FACTOR)
 
 func broadcast(packet):
 	if (host):
@@ -73,10 +73,10 @@ func broadcast(packet):
 	else:
 		packet_peer.put_var(packet)
 
-func set_state(state):
-	self.state = state
+func set_state(p_state):
+	self.state = p_state
 	self.state_timer = 0
-	
+
 # Lerp vector
 func lerp_pos(v1, v2, alpha):
 	return v1 * alpha + v2 * (1.0 - alpha)
@@ -91,10 +91,10 @@ func slerp_rot(r1, r2, alpha):
 # Spherical linear interpolation of two 2D vectors
 func slerp(v1, v2, alpha):
 	var cos_angle = clamp(v1.dot(v2), -1.0, 1.0)
-	
+
 	if (cos_angle > 1.0 - EPSILON):
 		return lerp_pos(v1, v2, alpha).normalized()
-	
+
 	var angle = acos(cos_angle)
 	var angle_alpha = angle * alpha
 	var v3 = (v2 - (cos_angle * v1)).normalized()
