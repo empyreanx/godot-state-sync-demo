@@ -1,0 +1,321 @@
+[gd_scene load_steps=7 format=1]
+
+[ext_resource path="res://demo.gd" type="Script" id=1]
+[ext_resource path="res://box.tscn" type="PackedScene" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[sub_resource type="RectangleShape2D" id=2]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[sub_resource type="RectangleShape2D" id=3]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[sub_resource type="RectangleShape2D" id=4]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[node name="demo" type="Node"]
+
+script/script = ExtResource( 1 )
+__meta__ = {
+"__editor_plugin_screen__": "Script"
+}
+
+[node name="controls" type="GridContainer" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 191.0
+margin/bottom = 180.0
+columns = 2
+
+[node name="port_label" type="Label" parent="controls"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 0.0
+margin/top = 5.0
+margin/right = 79.0
+margin/bottom = 19.0
+text = "Port"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="port" type="SpinBox" parent="controls"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 3
+size_flags/vertical = 2
+margin/left = 83.0
+margin/top = 0.0
+margin/right = 191.0
+margin/bottom = 24.0
+range/min = 3000.0
+range/max = 65535.0
+range/step = 1.0
+range/page = 0.0
+range/value = 3000.0
+range/exp_edit = false
+range/rounded = false
+editable = true
+prefix = ""
+suffix = ""
+
+[node name="ip_label" type="Label" parent="controls"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 0.0
+margin/top = 33.0
+margin/right = 79.0
+margin/bottom = 47.0
+text = "IP"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="ip" type="LineEdit" parent="controls"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 83.0
+margin/top = 28.0
+margin/right = 191.0
+margin/bottom = 52.0
+text = "127.0.0.1"
+placeholder/alpha = 0.6
+focus_mode = 2
+caret/caret_blink = false
+caret/caret_blink_speed = 0.65
+
+[node name="network_fps_label" type="Label" parent="controls"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 0.0
+margin/top = 61.0
+margin/right = 79.0
+margin/bottom = 75.0
+text = "Network FPS"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="network_fps" type="SpinBox" parent="controls"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 83.0
+margin/top = 56.0
+margin/right = 191.0
+margin/bottom = 80.0
+range/min = 0.0
+range/max = 100.0
+range/step = 1.0
+range/page = 0.0
+range/value = 40.0
+range/exp_edit = false
+range/rounded = false
+editable = true
+prefix = ""
+suffix = ""
+
+[node name="empty_label1" type="Label" parent="controls"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 0.0
+margin/top = 87.0
+margin/right = 79.0
+margin/bottom = 101.0
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="start" type="Button" parent="controls"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 83.0
+margin/top = 84.0
+margin/right = 191.0
+margin/bottom = 104.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Start Server"
+flat = false
+
+[node name="empty_label2" type="Label" parent="controls"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 0.0
+margin/top = 111.0
+margin/right = 79.0
+margin/bottom = 125.0
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="connect" type="Button" parent="controls"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 83.0
+margin/top = 108.0
+margin/right = 191.0
+margin/bottom = 128.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Connect"
+flat = false
+
+[node name="boxes" type="Node" parent="."]
+
+[node name="box1" parent="boxes" instance=ExtResource( 2 )]
+
+transform/pos = Vector2( 262.505, 123.178 )
+
+[node name="box2" parent="boxes" instance=ExtResource( 2 )]
+
+transform/pos = Vector2( 451.068, 157.341 )
+
+[node name="box3" parent="boxes" instance=ExtResource( 2 )]
+
+transform/pos = Vector2( 308.834, 243.251 )
+
+[node name="walls" type="Node" parent="."]
+
+editor/display_folded = true
+
+[node name="bottom_wall" type="StaticBody2D" parent="walls"]
+
+editor/display_folded = true
+transform/pos = Vector2( 400.191, 600.148 )
+transform/scale = Vector2( 12.5083, 0.0381447 )
+input/pickable = false
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 4.51761, 0, 0, 185.862, -0.276592, 1864.46 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+
+[node name="bottom_collision" type="CollisionShape2D" parent="walls/bottom_wall"]
+
+transform/pos = Vector2( -0.276592, 1864.46 )
+transform/scale = Vector2( 4.51761, 185.862 )
+shape = SubResource( 1 )
+trigger = false
+_update_shape_index = -1
+
+[node name="top_wall" type="StaticBody2D" parent="walls"]
+
+editor/display_folded = true
+transform/pos = Vector2( 1.10803, -4.43214 )
+input/pickable = false
+shapes/0/shape = SubResource( 2 )
+shapes/0/transform = Matrix32( 56.6648, 0, 0, 6.32645, 396.303, -58.0293 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+
+[node name="top_collision" type="CollisionShape2D" parent="walls/top_wall"]
+
+transform/pos = Vector2( 396.303, -58.0293 )
+transform/scale = Vector2( 56.6648, 6.32645 )
+shape = SubResource( 2 )
+trigger = false
+_update_shape_index = -1
+
+[node name="left_wall" type="StaticBody2D" parent="walls"]
+
+editor/display_folded = true
+input/pickable = false
+shapes/0/shape = SubResource( 3 )
+shapes/0/transform = Matrix32( 8.45779, 0, 0, 43.3828, -84.5092, 308.042 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+
+[node name="left_collision" type="CollisionShape2D" parent="walls/left_wall"]
+
+transform/pos = Vector2( -84.5092, 308.042 )
+transform/scale = Vector2( 8.45779, 43.3828 )
+shape = SubResource( 3 )
+trigger = false
+_update_shape_index = -1
+
+[node name="right_wall" type="StaticBody2D" parent="walls"]
+
+editor/display_folded = true
+input/pickable = false
+shapes/0/shape = SubResource( 4 )
+shapes/0/transform = Matrix32( 8.12344, 0, 0, 43.2981, 881.021, 307.751 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+
+[node name="right_collision" type="CollisionShape2D" parent="walls/right_wall"]
+
+transform/pos = Vector2( 881.021, 307.751 )
+transform/scale = Vector2( 8.12344, 43.2981 )
+shape = SubResource( 4 )
+trigger = false
+_update_shape_index = -1
+
+[connection signal="pressed" from="controls/start" to="." method="_on_start_pressed"]
+
+[connection signal="pressed" from="controls/connect" to="." method="_on_connect_pressed"]
+
+
