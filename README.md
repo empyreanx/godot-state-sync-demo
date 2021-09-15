@@ -1,3 +1,5 @@
+**Note:** This demo has been ported to Godot3. The original Godot2 version is located [here](https://github.com/empyreanx/godot-state-sync-demo/tree/godot2) for posterity.
+
 # State Synchronization Demo
 
 In light of what I've learned since I made the [snapshot interpolation demo](https://github.com/jrimclean/godot-snapshot-interpolation-demo), I have decided to write a new demo for [Godot](http://www.godotengine.org) illustrating a technique called state synchronization. This is now my recommended approach for networked physics using Godot.
@@ -15,6 +17,9 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 * Jitter buffer
 * Snap state when distance is greater than some threshold
 * Compression
+
+## Credits
+[Ryan Roden-Corrent](https://github.com/rcorre) for the port to Godot3
 
 ## License
 Copyright (c) 2015 James McLean  
