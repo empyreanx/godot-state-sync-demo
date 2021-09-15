@@ -1,0 +1,127 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://demo.gd" type="Script" id=1]
+[ext_resource path="res://box.tscn" type="PackedScene" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 512, 10 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 512, 10 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 10, 300 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 10, 300 )
+
+[node name="demo" type="Node"]
+script = ExtResource( 1 )
+__meta__ = {
+"__editor_plugin_screen__": "Script"
+}
+
+[node name="controls" type="GridContainer" parent="."]
+columns = 2
+
+[node name="port_label" type="Label" parent="controls"]
+margin_top = 5.0
+margin_right = 79.0
+margin_bottom = 19.0
+text = "Port"
+
+[node name="port" type="SpinBox" parent="controls"]
+margin_left = 83.0
+margin_right = 168.0
+margin_bottom = 24.0
+min_value = 1000.0
+max_value = 65535.0
+value = 7642.0
+
+[node name="ip_label" type="Label" parent="controls"]
+margin_top = 33.0
+margin_right = 79.0
+margin_bottom = 47.0
+text = "IP"
+
+[node name="ip" type="LineEdit" parent="controls"]
+margin_left = 83.0
+margin_top = 28.0
+margin_right = 168.0
+margin_bottom = 52.0
+text = "127.0.0.1"
+
+[node name="network_fps_label" type="Label" parent="controls"]
+margin_top = 61.0
+margin_right = 79.0
+margin_bottom = 75.0
+text = "Network FPS"
+
+[node name="network_fps" type="SpinBox" parent="controls"]
+margin_left = 83.0
+margin_top = 56.0
+margin_right = 168.0
+margin_bottom = 80.0
+
+[node name="empty_label1" type="Label" parent="controls"]
+margin_top = 87.0
+margin_right = 79.0
+margin_bottom = 101.0
+
+[node name="start" type="Button" parent="controls"]
+margin_left = 83.0
+margin_top = 84.0
+margin_right = 168.0
+margin_bottom = 104.0
+text = "Start Server"
+
+[node name="empty_label2" type="Label" parent="controls"]
+margin_top = 111.0
+margin_right = 79.0
+margin_bottom = 125.0
+
+[node name="connect" type="Button" parent="controls"]
+margin_left = 83.0
+margin_top = 108.0
+margin_right = 168.0
+margin_bottom = 128.0
+text = "Connect"
+
+[node name="boxes" type="Node" parent="."]
+
+[node name="box1" parent="boxes" instance=ExtResource( 2 )]
+position = Vector2( 262.505, 123.178 )
+
+[node name="box2" parent="boxes" instance=ExtResource( 2 )]
+position = Vector2( 451.068, 157.341 )
+
+[node name="box3" parent="boxes" instance=ExtResource( 2 )]
+position = Vector2( 345.669, 248.264 )
+
+[node name="walls" type="Node" parent="."]
+
+[node name="bottom_wall" type="StaticBody2D" parent="walls"]
+position = Vector2( 512, 600 )
+
+[node name="bottom_collision" type="CollisionShape2D" parent="walls/bottom_wall"]
+shape = SubResource( 1 )
+
+[node name="top_wall" type="StaticBody2D" parent="walls"]
+position = Vector2( 512, 0 )
+
+[node name="top_collision" type="CollisionShape2D" parent="walls/top_wall"]
+shape = SubResource( 2 )
+
+[node name="left_wall" type="StaticBody2D" parent="walls"]
+position = Vector2( 0, 300 )
+
+[node name="left_collision" type="CollisionShape2D" parent="walls/left_wall"]
+shape = SubResource( 3 )
+
+[node name="right_wall" type="StaticBody2D" parent="walls"]
+position = Vector2( 1024, 300 )
+
+[node name="right_collision" type="CollisionShape2D" parent="walls/right_wall"]
+shape = SubResource( 4 )
+[connection signal="pressed" from="controls/start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="controls/connect" to="." method="_on_connect_pressed"]
