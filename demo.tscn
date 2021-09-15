@@ -123,5 +123,6 @@ position = Vector2( 1024, 300 )
 
 [node name="right_collision" type="CollisionShape2D" parent="walls/right_wall"]
 shape = SubResource( 4 )
+
 [connection signal="pressed" from="controls/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="controls/connect" to="." method="_on_connect_pressed"]
