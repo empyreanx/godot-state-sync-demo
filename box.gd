@@ -23,12 +23,17 @@ func _ready():
 func _integrate_forces(s):
 	if (not host and state != null and state_timer < STATE_EXPIRATION_TIME):
 		state_timer += s.get_step()
-		var transform = s.get_transform()
-		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
+
+		# Lerp
 		var rot = slerp_rot(transform.get_rotation(), state[1], ALPHA)
-		var x_axis = Vector2(cos(rot), -sin(rot))
-		var y_axis = Vector2(sin(rot), cos(rot))
-		s.set_transform(Transform2D(x_axis, y_axis, pos))
+		var pos = lerp_pos(transform.get_origin(), state[0], 1.0 - ALPHA)
+
+		# Transforms
+		var transform = s.get_transform().rotated(rot - get_rotation())
+		transform.origin = pos
+		s.set_transform(transform)
+
+		# Forces
 		s.set_linear_velocity(state[2])
 		s.set_angular_velocity(state[3])
 
