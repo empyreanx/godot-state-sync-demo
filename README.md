@@ -2,7 +2,7 @@
 
 # State Synchronization Demo
 
-In light of what I've learned since I made the [snapshot interpolation demo](https://github.com/jrimclean/godot-snapshot-interpolation-demo), I have decided to write a new demo for [Godot](http://www.godotengine.org) illustrating a technique called state synchronization. This is now my recommended approach for networked physics using Godot.
+In light of what I've learned since I made the [snapshot interpolation demo](https://github.com/jrimclean/godot-snapshot-interpolation-demo), I have decided to write a new demo for [Godot](http://www.godotengine.org) illustrating a technique called [state synchronization](https://gafferongames.com/post/state_synchronization/). This is now my recommended approach for networked physics using Godot.
 
 Both the client and the server run the physical simulation. State snapshots are sent from the server to the client at a high rate. The client stores the most recent update and then interpolates toward it, which has the effect of smoothing the motion of bodies in the simulation.
 
@@ -22,5 +22,5 @@ To start a dedicated server with the headless version of Godot type, "godotserve
 [Ryan Roden-Corrent](https://github.com/rcorre) for the port to Godot3
 
 ## License
-Copyright (c) 2015 James McLean  
+Copyright (c) 2015 James McLean
 Licensed under the MIT license.
